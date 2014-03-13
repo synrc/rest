@@ -1,0 +1,9 @@
+{application, rest, [
+    {description,  "REST SXC"},
+    {vsn,          "3.0"},
+    {applications, [kernel, stdlib, cowboy, ranch, gproc, mimetypes, erlydtl]},
+    {modules, []},
+    {registered,   []},
+    {mod, { rest_app, []}},
+    {env, []}
+]}.
