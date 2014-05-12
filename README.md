@@ -1,5 +1,5 @@
-REST: N2O standalone endpoint
-=============================
+REST: micro-framework with typed JSON
+=====================================
 
 Usage
 -----
