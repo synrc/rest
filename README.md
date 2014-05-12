@@ -1,5 +1,5 @@
-REST: micro-framework with typed JSON
-=====================================
+REST: framework with typed JSON
+===============================
 
 Usage
 -----
