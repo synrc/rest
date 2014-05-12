@@ -1,8 +1,10 @@
-REST: N2O separate endpoint
-===========================
+REST: N2O standalone endpoint
+=============================
 
 Usage
 -----
+
+Just plug REST endpoint directly to your Cowboy router:
 
 ```erlang
 {"/rest/:resource", rest_cowboy, []},
@@ -11,6 +13,8 @@ Usage
 
 Module
 ------
+
+Sample REST service implementation:
 
 ```erlang
 -module(users).
@@ -30,3 +34,19 @@ post(#user{} = User) -> ets:insert(users, User);
 post(Data) -> post(from_json(Data, #user{})).
 ```
 
+Usage
+-----
+
+    curl -i -X POST -d "id=vlad" localhost:8000/rest/users
+    curl -i -X POST -d "id=doxtop" localhost:8000/rest/users
+    curl -i -X GET localhost:8000/rest/users
+    curl -i -X PUT -d "id=5HT" localhost:8000/rest/users/vlad
+    curl -i -X GET localhost:8000/rest/users/5HT
+    curl -i -X DELETE localhost:8000/rest/users/5HT
+
+Credits
+-------
+
+* Dmitry Bushmelev
+
+OM A HUM
