@@ -32,10 +32,12 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a name="rest-n2o-separate-endpoint" class="anchor" href="#rest-n2o-separate-endpoint"><span class="octicon octicon-link"></span></a>REST: N2O separate endpoint</h1>
+<a name="rest-framework-with-typed-json" class="anchor" href="#rest-framework-with-typed-json"><span class="octicon octicon-link"></span></a>REST: framework with typed JSON</h1>
 
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Just plug REST endpoint directly to your Cowboy router:</p>
 
 <div class="highlight highlight-erlang"><pre><span class="p">{</span><span class="s">"/rest/:resource"</span><span class="p">,</span> <span class="n">rest_cowboy</span><span class="p">,</span> <span class="p">[]},</span>
 <span class="p">{</span><span class="s">"/rest/:resource/:id"</span><span class="p">,</span> <span class="n">rest_cowboy</span><span class="p">,</span> <span class="p">[]},</span>
@@ -43,6 +45,8 @@
 
 <h2>
 <a name="module" class="anchor" href="#module"><span class="octicon octicon-link"></span></a>Module</h2>
+
+<p>Sample REST service implementation:</p>
 
 <div class="highlight highlight-erlang"><pre><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">users</span><span class="p">).</span>
 <span class="p">-</span><span class="ni">behaviour</span><span class="p">(</span><span class="n">rest</span><span class="p">).</span>
@@ -60,6 +64,24 @@
 <span class="nf">post</span><span class="p">(</span><span class="nl">#user</span><span class="p">{}</span> <span class="o">=</span> <span class="nv">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nn">ets</span><span class="p">:</span><span class="nf">insert</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="nv">User</span><span class="p">);</span>
 <span class="nf">post</span><span class="p">(</span><span class="nv">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">post</span><span class="p">(</span><span class="n">from_json</span><span class="p">(</span><span class="nv">Data</span><span class="p">,</span> <span class="nl">#user</span><span class="p">{})).</span>
 </pre></div>
+
+<h2>
+<a name="usage-1" class="anchor" href="#usage-1"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<pre><code>curl -i -X POST -d "id=vlad" localhost:8000/rest/users
+curl -i -X POST -d "id=doxtop" localhost:8000/rest/users
+curl -i -X GET localhost:8000/rest/users
+curl -i -X PUT -d "id=5HT" localhost:8000/rest/users/vlad
+curl -i -X GET localhost:8000/rest/users/5HT
+curl -i -X DELETE localhost:8000/rest/users/5HT
+</code></pre>
+
+<h2>
+<a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h2>
+
+<ul>
+<li>Dmitry Bushmelev</li>
+</ul><p>OM A HUM</p>
       </section>
     </div>
 
