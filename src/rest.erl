@@ -121,11 +121,20 @@ props_skip({<<BinaryKey/binary>>, Value}, Acc) ->
 props_skip({Key, Value}, Acc) -> [{Key, from_json(Value)} | Acc].
 
 to_json(Data) ->
-    case wf_utils:is_string(Data) of
-        true  -> wf:to_binary(Data);
+    case is_string(Data) of
+        true  -> to_binary(Data);
         false -> json_match(Data)
     end.
 
-json_match([{_, _} | _] = Props) -> [{wf:to_binary(Key), to_json(Value)} || {Key, Value} <- Props];
+json_match([{_, _} | _] = Props) -> [{to_binary(Key), to_json(Value)} || {Key, Value} <- Props];
 json_match([_ | _] = NonEmptyList) -> [to_json(X) || X <- NonEmptyList];
 json_match(Any) -> Any.
+
+is_char(C) -> is_integer(C) andalso C >= 0 andalso C =< 255.
+is_string([N | _] = PossibleString) when is_number(N) -> lists:all(fun is_char/1, PossibleString);
+is_string(_)                                          -> false.
+
+to_binary(A) when is_atom(A) -> to_binary(atom_to_list(A));
+to_binary(B) when is_binary(B) -> B;
+to_binary(I) when is_integer(I) -> to_binary(integer_to_list(I));
+to_binary(L) when is_list(L) ->  iolist_to_binary(L).
