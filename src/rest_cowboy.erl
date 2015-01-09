@@ -15,8 +15,9 @@ rest_init(Req, _Opts) ->
     {Resource, Req1} = cowboy_req:binding(resource, Req),
     Module = case rest_module(Resource) of {ok, M} -> M; _ -> undefined end,
     {Id, Req2} = cowboy_req:binding(id, Req1),
-    Req3 = cowboy_req:set_resp_header(<<"Access-Control-Allow-Origin">>, <<"*">>, Req2),
-    {ok, Req3, #st{resource_module = Module, resource_id = Id}}.
+    {Origin, Req3} = cowboy_req:header(<<"origin">>, Req2, <<"*">>),
+    Req4 = cowboy_req:set_resp_header(<<"Access-Control-Allow-Origin">>, Origin, Req3),
+    {ok, Req4, #st{resource_module = Module, resource_id = Id}}.
 
 resource_exists(Req, #st{resource_module = undefined} = State)       -> {false, Req, State};
 resource_exists(Req, #st{resource_id     = undefined} = State)       -> {true, Req, State};
