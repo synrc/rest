@@ -1,6 +1,6 @@
 {application, rest, [
     {description,  "REST SXC"},
-    {vsn,          "3.0"},
+    {vsn,          "2.9"},
     {applications, [kernel, stdlib, cowboy]},
     {modules, []},
     {registered,   []},

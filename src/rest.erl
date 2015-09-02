@@ -1,6 +1,7 @@
 -module(rest).
 -author('Dmitry Bushmelev').
--export([behaviour_info/1, parse_transform/2, generate_to_json/3, generate_from_json/3, from_json/1, to_json/1]).
+-export([behaviour_info/1, parse_transform/2, generate_to_json/3,
+         generate_from_json/3, from_json/1, to_json/1, to_binary/1]).
 
 behaviour_info(callbacks) -> [{exists, 1}, {get, 0}, {get, 1}, {post, 1}, {delete, 1}, {from_json, 2}, {to_json, 1}];
 behaviour_info(_) -> undefined.
@@ -122,19 +123,21 @@ props_skip({Key, Value}, Acc) -> [{Key, from_json(Value)} | Acc].
 
 to_json(Data) ->
     case is_string(Data) of
-        true  -> to_binary(Data);
+        true  -> rest:to_binary(Data);
         false -> json_match(Data)
     end.
 
-json_match([{_, _} | _] = Props) -> [{to_binary(Key), to_json(Value)} || {Key, Value} <- Props];
+json_match([{_, _} | _] = Props) -> [{rest:to_binary(Key), to_json(Value)} || {Key, Value} <- Props];
 json_match([_ | _] = NonEmptyList) -> [to_json(X) || X <- NonEmptyList];
 json_match(Any) -> Any.
 
 is_char(C) -> is_integer(C) andalso C >= 0 andalso C =< 255.
+
 is_string([N | _] = PossibleString) when is_number(N) -> lists:all(fun is_char/1, PossibleString);
 is_string(_)                                          -> false.
 
-to_binary(A) when is_atom(A) -> to_binary(atom_to_list(A));
+to_binary(A) when is_atom(A) -> atom_to_binary(A,latin1);
 to_binary(B) when is_binary(B) -> B;
 to_binary(I) when is_integer(I) -> to_binary(integer_to_list(I));
+to_binary(F) when is_float(F) -> float_to_binary(F,[{decimals,9},compact]);
 to_binary(L) when is_list(L) ->  iolist_to_binary(L).

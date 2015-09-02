@@ -5,11 +5,11 @@
          to_html/2, to_json/2, content_types_accepted/2, delete_resource/2,
          handle_urlencoded_data/2, handle_json_data/2]).
 
--ifndef(JSON).
--define(JSON, (config(rest,json,n2o_json))).
--endif.
-
 init(_, _, _) -> {upgrade, protocol, cowboy_rest}.
+
+-ifndef(REST_JSON).
+-define(REST_JSON, (application:get_env(rest,json,jsone))).
+-endif.
 
 rest_init(Req, _Opts) ->
     {Resource, Req1} = cowboy_req:binding(resource, Req),
@@ -45,9 +45,9 @@ default_html_layout(Body) -> [<<"<html><body>">>, Body, <<"</body></html>">>].
 
 to_json(Req, #st{resource_module = M, resource_id = Id} = State) ->
     Struct = case Id of
-                 undefined -> {struct, [{M, [{struct, M:to_json(Resource)} || Resource <- M:get()]}]};
-                 _         -> {struct, M:to_json(M:get(Id))} end,
-    {iolist_to_binary(?JSON:encode(Struct)), Req, State}.
+                 undefined -> [{M, [ M:to_json(Resource) || Resource <- M:get() ] } ];
+                 _         -> M:to_json(M:get(Id)) end,
+    {iolist_to_binary(?REST_JSON:encode(Struct)), Req, State}.
 
 content_types_accepted(Req, State) -> {[{<<"application/x-www-form-urlencoded">>, handle_urlencoded_data},
                                         {<<"application/json">>, handle_json_data}], Req, State}.
@@ -58,7 +58,7 @@ handle_urlencoded_data(Req, #st{resource_module = M, resource_id = Id} = State) 
 
 handle_json_data(Req, #st{resource_module = M, resource_id = Id} = State) ->
     {ok, Binary, Req2} = cowboy_req:body(Req),
-    Data = case ?JSON:decode(Binary) of {struct, Struct} -> Struct; _ -> [] end,
+    Data = case ?REST_JSON:decode(Binary) of {struct, Struct} -> Struct; S -> S end,
     {handle_data(M, Id, Data), Req2, State}.
 
 handle_data(Mod, Id, Data) ->
@@ -104,9 +104,3 @@ rest_module(Module) ->
         true = lists:member(rest, proplists:get_value(behaviour, Info)),
         {ok, M}
     catch error:Error -> {error, Error} end.
-
-config(Key) -> config(rest, Key, "").
-config(App,Key) -> config(App,Key, "").
-config(App, Key, Default) -> case application:get_env(App,Key) of
-                              undefined -> Default;
-                              {ok,V} -> V end.
