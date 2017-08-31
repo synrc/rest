@@ -20,13 +20,17 @@ rest_record([{attribute, _, rest_record, RecordName} | _Forms]) -> RecordName;
 rest_record([_ | Forms]) -> rest_record(Forms).
 
 record_field({record_field, _, {atom, _, Field}   }) -> Field;
-record_field({record_field, _, {atom, _, Field}, _}) -> Field.
+record_field({record_field, _, {atom, _, Field}, _}) -> Field;
+record_field({typed_record_field, {record_field,_,{atom, _, Field},_}, _}) -> Field.
 
 record_fields(RecordName, [{attribute, _, record, {RecordName, Fields}} | _Forms]) ->
     [record_field(Field) || Field <- Fields];
 record_fields(RecordName, [_ | Forms]) -> record_fields(RecordName, Forms).
 
-last_export_line(Exports) -> [{_, Line, _, _} | _] = lists:reverse(Exports), Line.
+last_export_line(Exports) ->
+    case lists:reverse(Exports) of
+         [{_, Line, _, _} | _] -> Line;
+         _ -> 0 end.
 
 generate({FunName, _Arity} = Fun, Record, Fields, Forms) ->
     Exports = lists:filter(fun({attribute, _, export, _}) -> true; (_) -> false end, Forms),
