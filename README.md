@@ -1,7 +1,7 @@
 REST: framework with typed JSON
 ===============================
 
-Features and Golas
+Features and Goals
 ------------------
 
 * Fastest possibe Record <-> Proplists transformations
