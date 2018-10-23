@@ -3,7 +3,7 @@ defmodule REST.Mixfile do
 
   def project do
     [app: :rest,
-     version: "1.5.0",
+     version: "5.10.0",
      description: "REST erlang interface generator",
      package: package]
   end
