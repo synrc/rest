@@ -7,9 +7,12 @@ Features and Goals
 ------------------
 
 * Fastest possibe Record <-> Proplists transformations
-* Smalled REST framework in the World
+* Smallest REST framework in the world
+* ETS/KVS/Any storage selection by scaffolding
 
-We achived first requirement by providing parse_transform code generation for tuple transformations. And second requirement was achieved by not including routing bullshit and other uncertain features.
+We've achived first goal by providing parse_transform code generation
+for tuple transformations. And second requirement was achieved
+by not including routing bullshit and other uncertain features.
 
 Usage
 -----

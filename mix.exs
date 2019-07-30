@@ -17,7 +17,7 @@ defmodule REST.Mixfile do
   end
 
   def deps, do: [ {:ex_doc, ">= 0.0.0", only: :dev},
-                  {:rocksdb, github: "enterprizing/rocksdb"},
+                  {:rocksdb, "~> 1.2.0"},
                   {:kvs, "~> 6.7.7"},
                   {:syn, "~> 1.6.3"},
                   {:n2o, "~> 6.7.7"},
