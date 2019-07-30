@@ -1,7 +1,23 @@
 -module(rest).
 -author('Dmitry Bushmelev').
+-behaviour(application).
+-behaviour(supervisor).
+-export([init/1,start/2, stop/1]).
 -export([behaviour_info/1, parse_transform/2, generate_to_json/3,
          generate_from_json/3, from_json/1, to_json/1, to_binary/1]).
+
+stop(_State) -> ok.
+start(_StartType, _StartArgs) -> supervisor:start_link({local, ?MODULE}, ?MODULE, []).
+init([]) ->
+   users:init(),
+   cowboy:start_clear(http, [{port,application:get_env(n2o,port,8005)}],
+                            #{env=>#{dispatch=> points() }}),
+   {ok, {{one_for_one, 5, 10}, []}}.
+
+points() -> cowboy_router:compile([{'_', [
+             {"/rest/:resource",     rest_cowboy, []},
+             {"/rest/:resource/:id", rest_cowboy, []}
+            ]}]).
 
 behaviour_info(callbacks) -> [{exists, 1}, {get, 0}, {get, 1}, {post, 1}, {delete, 1}, {from_json, 2}, {to_json, 1}];
 behaviour_info(_) -> undefined.
