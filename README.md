@@ -47,12 +47,12 @@ post(Data) -> post(from_json(Data, #user{})).
 Usage
 -----
 
-    curl -i -X POST -d "id=vlad" localhost:8000/rest/users
-    curl -i -X POST -d "id=doxtop" localhost:8000/rest/users
-    curl -i -X GET localhost:8000/rest/users
-    curl -i -X PUT -d "id=5HT" localhost:8000/rest/users/vlad
-    curl -i -X GET localhost:8000/rest/users/5HT
-    curl -i -X DELETE localhost:8000/rest/users/5HT
+    curl -i -X POST -d "id=vlad" localhost:8005/rest/users
+    curl -i -X POST -d "id=doxtop" localhost:8005/rest/users
+    curl -i -X GET localhost:8005/rest/users
+    curl -i -X PUT -d "id=5HT" localhost:8005/rest/users/vlad
+    curl -i -X GET localhost:8005/rest/users/5HT
+    curl -i -X DELETE localhost:8005/rest/users/5HT
 
 Credits
 -------

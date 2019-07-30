@@ -1,7 +1,7 @@
 {application, rest, [
     {description,  "REST Yoctoframework"},
     {vsn,          "5.10.1"},
-    {applications, [kernel, stdlib]},
+    {applications, [public_key,asn1,kernel,stdlib,ranch,cowboy,syntax_tools,compiler,n2o]},
     {modules, []},
     {registered,   []},
     {mod, { rest_app, []}},
