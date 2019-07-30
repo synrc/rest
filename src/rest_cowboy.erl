@@ -29,8 +29,8 @@ resource_exists(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
 resource_exists(#{bindings := #{resource := _}} = Req, State) -> io:format("EXISTS: false~n"), {false, Req, State};
 resource_exists(#{bindings := #{id := _}} = Req, State) -> io:format("EXISTS: true~n"), {true, Req, State}.
 
-%allowed_methods(Req, #st{resource_id = <<"undefined">>} = State) -> {[<<"GET">>, <<"POST">>], Req, State};
-allowed_methods(Req, State)                                -> {[<<"GET">>, <<"PUT">>, <<"DELETE">>], Req, State}.
+allowed_methods(#{bindings := #{resource := _}} = Req, State) -> {[<<"GET">>, <<"POST">>], Req, State};
+allowed_methods(#{bindings := #{resource := _, id := _}} = Req, State) -> {[<<"GET">>, <<"PUT">>, <<"DELETE">>], Req, State}.
 
 content_types_provided(#{bindings := #{resource := Module}} = Req, State) ->
     {case erlang:function_exported(c(Module), to_html, 1) of
