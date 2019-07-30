@@ -1,6 +1,6 @@
 {application, rest, [
     {description,  "REST Yoctoframework"},
-    {vsn,          "5.10"},
+    {vsn,          "5.10.1"},
     {applications, [kernel, stdlib]},
     {modules, []},
     {registered,   []},

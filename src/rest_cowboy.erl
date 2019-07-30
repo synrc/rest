@@ -20,10 +20,10 @@ rest_init(Req, _Opts) ->
     {ok, Req4, #st{resource_module = Module, resource_id = Id}}.
 
 resource_exists(Req, #st{resource_module = undefined} = State)       -> {false, Req, State};
-resource_exists(Req, #st{resource_id     = undefined} = State)       -> {true, Req, State};
+resource_exists(Req, #st{resource_id     = <<"undefined">>} = State)       -> {true, Req, State};
 resource_exists(Req, #st{resource_module = M, resource_id = Id} = S) -> {M:exists(Id), Req, S}.
 
-allowed_methods(Req, #st{resource_id = undefined} = State) -> {[<<"GET">>, <<"POST">>], Req, State};
+allowed_methods(Req, #st{resource_id = <<"undefined">>} = State) -> {[<<"GET">>, <<"POST">>], Req, State};
 allowed_methods(Req, State)                                -> {[<<"GET">>, <<"PUT">>, <<"DELETE">>], Req, State}.
 
 content_types_provided(Req, #st{resource_module = M} = State) ->
@@ -34,7 +34,7 @@ content_types_provided(Req, #st{resource_module = M} = State) ->
 
 to_html(Req, #st{resource_module = M, resource_id = Id} = State) ->
     Body = case Id of
-               undefined -> [M:to_html(Resource) || Resource <- M:get()];
+               <<"undefined">> -> [M:to_html(Resource) || Resource <- M:get()];
                _ -> M:to_html(M:get(Id)) end,
     Html = case erlang:function_exported(M, html_layout, 2) of
                true  -> M:html_layout(Req, Body);
@@ -45,7 +45,7 @@ default_html_layout(Body) -> [<<"<html><body>">>, Body, <<"</body></html>">>].
 
 to_json(Req, #st{resource_module = M, resource_id = Id} = State) ->
     Struct = case Id of
-                 undefined -> [{M, [ M:to_json(Resource) || Resource <- M:get() ] } ];
+                 <<"undefined">> -> [{M, [ M:to_json(Resource) || Resource <- M:get() ] } ];
                  _         -> M:to_json(M:get(Id)) end,
     {iolist_to_binary(?REST_JSON:encode(Struct)), Req, State}.
 
@@ -67,7 +67,7 @@ handle_data(Mod, Id, Data) ->
                 false -> default_validate(Mod, Id, Data) end,
     case {Valid, Id} of
         {false, _}         -> false;
-        {true,  undefined} -> Mod:post(Data);
+        {true,  <<"undefined">>} -> Mod:post(Data);
         {true,  _}         -> case erlang:function_exported(Mod, put, 2) of
                                   true  -> Mod:put(Id, Data);
                                   false -> default_put(Mod, Id, Data) end
@@ -87,10 +87,10 @@ default_validate(Mod, Id, Data) ->
                   false -> true end,
     validate_match(Mod, Id, Allowed, proplists:get_value(<<"id">>, Data)).
 
-validate_match(_Mod, undefined, true, undefined) -> false;
-validate_match(_Mod, undefined, true, <<"">>)    -> false;
-validate_match( Mod, undefined, true, NewId)     -> not Mod:exists(NewId);
-validate_match(_Mod,       _Id, true, undefined) -> true;
+validate_match(_Mod, <<"undefined">>, true, <<"undefined">>) -> false;
+validate_match(_Mod, <<"undefined">>, true, <<"">>)    -> false;
+validate_match( Mod, <<"undefined">>, true, NewId)     -> not Mod:exists(NewId);
+validate_match(_Mod,       _Id, true, <<"undefined">>) -> true;
 validate_match(_Mod,        Id, true, Id)        -> true;
 validate_match( Mod,       _Id, true, NewId)     -> not Mod:exists(NewId);
 validate_match(   _,         _,    _, _)         -> false.
