@@ -22,13 +22,14 @@ rest_init(Req, _Opts) ->
     io:format("REST INIT~p"),
     {ok, Req4, #st{resource_module = Module, resource_id = Id}}.
 
-resource_exists(#{bindings := #{resource := _}} = Req, State) -> {false, Req, State};
-resource_exists(#{bindings := #{id := _}} = Req, State) -> {true, Req, State};
 resource_exists(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
     M = c(Module),
-    {M:exists(Id), Req, State}.
+    io:format("EXISTS: ~p dymamic: ~p~n",[Id,M:exists(Id)]),
+    {M:exists(Id), Req, State};
+resource_exists(#{bindings := #{resource := _}} = Req, State) -> io:format("EXISTS: false~n"), {false, Req, State};
+resource_exists(#{bindings := #{id := _}} = Req, State) -> io:format("EXISTS: true~n"), {true, Req, State}.
 
-allowed_methods(Req, #st{resource_id = <<"undefined">>} = State) -> {[<<"GET">>, <<"POST">>], Req, State};
+%allowed_methods(Req, #st{resource_id = <<"undefined">>} = State) -> {[<<"GET">>, <<"POST">>], Req, State};
 allowed_methods(Req, State)                                -> {[<<"GET">>, <<"PUT">>, <<"DELETE">>], Req, State}.
 
 content_types_provided(#{bindings := #{resource := Module}} = Req, State) ->
@@ -98,8 +99,10 @@ default_put(Mod, Id, Data, Req) when is_map(Data) -> default_put(Mod, Id, maps:t
 default_put(Mod, Id, Data, Req) ->
     NewRes = Mod:from_json(Data, Mod:get(Id)),
     NewId = proplists:get_value(id, Mod:to_json(NewRes)),
+    io:format("Id ~p NewId ~p~n",[Id,NewId]),
     case Id =/= NewId of
-        true  -> Mod:delete(Id);
+        true when Id =:= [] -> skip;
+        true -> Mod:delete(Id);
         false -> true end,
     Mod:post(NewRes).
 
@@ -117,8 +120,10 @@ validate_match(_Mod,  Id, true, Id)      -> true;
 validate_match( Mod, _Id, true, NewId)   -> not Mod:exists(NewId);
 validate_match(   _,         _,    _, _) -> false.
 
+delete_resource(#{bindings := #{resource := Module, id := []}} = Req, State) -> {[], Req, State};
 delete_resource(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
    M = c(Module),
+   io:format("DELETE: ~p ~p ~p~n",[M,Id,M:delete(Id)]),
    {M:delete(Id), Req, State}.
 
 rest_module(Module) when is_binary(Module) -> rest_module(binary_to_list(Module));
