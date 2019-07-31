@@ -44,7 +44,8 @@ record_field({typed_record_field, {record_field,_,{atom, _, Field},_}, _}) -> Fi
 
 record_fields(RecordName, [{attribute, _, record, {RecordName, Fields}} | _Forms]) ->
     [record_field(Field) || Field <- Fields];
-record_fields(RecordName, [_ | Forms]) -> record_fields(RecordName, Forms).
+record_fields(RecordName, [_ | Forms]) -> record_fields(RecordName, Forms);
+record_fields(RecordName, []) -> [].
 
 last_export_line(Exports) ->
     case lists:reverse(Exports) of
