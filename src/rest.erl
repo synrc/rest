@@ -10,11 +10,14 @@ stop(_State) -> ok.
 start(_StartType, _StartArgs) -> supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 init([]) ->
    users:init(),
+   kvs:join(),
    cowboy:start_clear(http, [{port,application:get_env(n2o,port,8005)}],
                             #{env=>#{dispatch=> points() }}),
    {ok, {{one_for_one, 5, 10}, []}}.
 
 points() -> cowboy_router:compile([{'_', [
+             {"/rest/kvs/0/[...]",     rest_kvs,    []},
+             {"/rest/kvs/1/:id/[...]", rest_kvs,    []},
              {"/rest/:resource",     rest_cowboy, []},
              {"/rest/:resource/:id", rest_cowboy, []}
             ]}]).

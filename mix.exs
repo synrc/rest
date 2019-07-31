@@ -12,7 +12,7 @@ defmodule REST.Mixfile do
   def application() do
     [
       mod: {:rest, []},
-      applications: [:public_key,:asn1,:kernel,:stdlib,:ranch,:cowboy,:syntax_tools,:compiler,:n2o]
+      applications: [:public_key,:asn1,:kernel,:stdlib,:ranch,:cowboy,:syntax_tools,:compiler,:rocksdb,:kvs,:n2o,:erp]
     ]
   end
 
@@ -20,6 +20,7 @@ defmodule REST.Mixfile do
                   {:rocksdb, "~> 1.2.0"},
                   {:kvs, "~> 6.7.7"},
                   {:syn, "~> 1.6.3"},
+                  {:erp, "~> 0.7.15"},
                   {:n2o, "~> 6.7.7"},
                   {:jsone, "~> 1.5.0"},
                   {:cowboy, "~> 2.5.0"} ]

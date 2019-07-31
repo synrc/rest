@@ -1,9 +1,9 @@
 {application, rest, [
     {description,  "REST Yoctoframework"},
-    {vsn,          "5.10.2"},
+    {vsn, "5.10.2"},
     {applications, [public_key,asn1,kernel,stdlib,ranch,cowboy,syntax_tools,compiler,n2o]},
     {modules, []},
-    {registered,   []},
-    {mod, { rest_app, []}},
+    {registered, []},
+    {mod, { rest, []}},
     {env, []}
 ]}.
