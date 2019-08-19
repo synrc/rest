@@ -25,10 +25,10 @@
     <article>
         <section>
             <h3>SYNOPSIS</h3>
-            <div>REST is a framework with typed JSON. Features and Goals: <br /><br />
-                 1. Fastest possible Record &#60;-&#62; Proplists transformations<br />
-                 2. Smallest REST framework in the world<br />
-                 3. ETS/KVS/Any storage selection by scaffolding<br /><br />
+            <div>REST is a framework with typed JSON. Features and Goals:
+              <ul><li>Fastest possible Record &#60;-&#62; Proplists transformations</li>
+                 <li>Smallest REST framework in the world</li>
+                 <li>ETS/KVS/Any storage selection by scaffolding</li></ul>
                  We've achived first goal by providing parse_transform code generation for tuple transformations.
                  And second requirement was achieved by not including routing bullshit and other uncertain features.
             </div>
@@ -36,15 +36,13 @@
 
         <section>
             <a name="usage"></a><h3>USAGE</h3>
-            <div>Just plug REST endpoint directly to your Cowboy router:</div>
+            <div>Just plug REST endpoint directly to your Cowboy router:</div><br/>
         <figure>
-        <code>
- {"/:res",rest_cowboy,[]},
+        <code> {"/:res",rest_cowboy,[]},
  {"/:res/:id",rest_cowboy,[]},
  {"/kvs/0/[...]",rest_kvs,[]},
- {"/kvs/1/:id/[...]",rest_kvs,[]},
-        </code>
-        </figure>
+ {"/kvs/1/:id/[...]",rest_kvs,[]},</code>
+        </figure><br/>
             <div>
                 OCT 2018 © <a href="https://github.com/5HT">5HT</a> <a href="https://5ht.co/license.htm">ISC</a><br />
                 VER 5.10
