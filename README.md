@@ -2,6 +2,7 @@ REST: framework with typed JSON
 ===============================
 
 [![Build Status](https://travis-ci.org/synrc/rest.svg?branch=master)](https://travis-ci.org/synrc/rest)
+[![Hex pm](http://img.shields.io/hexpm/v/rest.svg?style=flat)](https://hex.pm/packages/rest)
 
 Features and Goals
 ------------------
