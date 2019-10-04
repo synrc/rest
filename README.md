@@ -51,7 +51,7 @@ post(Data) -> post(from_json(Data, #user{})).
 Usage
 -----
 
-```erlang
+```sh
 $ curl -i -X POST -d "id=vlad" localhost:8005/rest/users
 $ curl -i -X POST -d "id=doxtop" localhost:8005/rest/users
 $ curl -i -X GET localhost:8005/rest/users
@@ -63,6 +63,7 @@ $ curl -i -X DELETE localhost:8005/rest/users/5HT
 Credits
 -------
 
-* Dmitry Bushmelev
+* Dmitry Bushmelev — ETS
+* Maxim Sokhatsky — KVS
 
 OM A HUM
