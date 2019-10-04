@@ -17,11 +17,10 @@ defmodule REST.Mixfile do
   end
 
   def deps, do: [ {:ex_doc, ">= 0.0.0", only: :dev},
-                  {:rocksdb, "~> 1.2.0"},
-                  {:kvs, "~> 6.7.7"},
+                  {:rocksdb, "~> 1.3.2"},
                   {:syn, "~> 1.6.3"},
-                  {:erp, "~> 0.7.15"},
-                  {:n2o, "~> 6.7.7"},
+                  {:erp, "~> 0.10.1"},
+                  {:n2o, "~> 6.9.0"},
                   {:jsone, "~> 1.5.0"},
                   {:cowboy, "~> 2.5.0"} ]
 
