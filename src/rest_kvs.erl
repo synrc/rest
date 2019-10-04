@@ -46,6 +46,8 @@ content_types_provided(#{bindings := #{resource := Module}} = Req, State) ->
          true  -> [{<<"text/html">>, to_html},
                    {<<"application/json">>, to_json}] end, Req, State}.
 
+% TODO: HTML render broken!
+
 to_html(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
     Body = case Id of
                Id when Id==[];Id==undefined -> [ rest_kvs:to_html(Module, Resource) || Resource <- rest_kvs:get(Module,Id) ];
@@ -57,13 +59,15 @@ to_html(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
 
 default_html_layout(Body) -> [<<"<html><body>">>, Body, <<"</body></html>">>].
 
+% JSON seems fine
+
 to_json(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
     {ok,Resource} = kvs:get(c(Module),c(Id)),
     Type = element(1,Resource),
-    {iolist_to_binary(?REST_JSON:encode(Type:to_json(Resource))), Req, State};
+    {iolist_to_binary([?REST_JSON:encode(Type:to_json(Resource)),"\n"]), Req, State};
 to_json(#{bindings := #{resource := Module}} = Req, State) ->
     Fold = [ begin M = element(1,Resource), M:to_json(Resource) end || Resource <- kvs:all(c(Module))],
-    {iolist_to_binary(?REST_JSON:encode([{Module,Fold}])), Req, State}.
+    {iolist_to_binary([?REST_JSON:encode([{Module,Fold}]),"\n"]), Req, State}.
 
 content_types_accepted(Req, State) ->
   {[{<<"application/x-www-form-urlencoded">>, handle_urlencoded_data},
@@ -97,11 +101,11 @@ handle_data(Mod, Id, Data, Req) ->
                 true  -> rest_kvs:validate(Mod,Id, Data);
                 false -> default_validate(Mod, Id, Data, Req) end,
     case {Valid, Id} of
-        {false, _}         -> false;
-        {true,  <<"undefined">>} -> rest_kvs:post(Type,Mod,Data);
-        {true,  _}         -> case application:get_env(rest,custom_put,false) of
-                                  true  -> Type:put(Mod, Id, Data);
-                                  false -> default_put(Type, Mod, Id, Data, Req) end
+         {false, _}         -> false;
+         {true,  <<"undefined">>} -> rest_kvs:post(Type,Mod,Data);
+         {true,  _}         -> case application:get_env(rest,custom_put,false) of
+                                   true  -> Type:put(Mod, Id, Data);
+                                   false -> default_put(Type, Mod, Id, Data, Req) end
     end.
 
 default_put(Type, Mod, Id, Data, Req) when is_map(Data) -> default_put(Type, Mod, Id, maps:to_list(Data), Req);

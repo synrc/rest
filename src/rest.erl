@@ -45,7 +45,7 @@ record_field({typed_record_field, {record_field,_,{atom, _, Field},_}, _}) -> Fi
 record_fields(RecordName, [{attribute, _, record, {RecordName, Fields}} | _Forms]) ->
     [record_field(Field) || Field <- Fields];
 record_fields(RecordName, [_ | Forms]) -> record_fields(RecordName, Forms);
-record_fields(RecordName, []) -> [].
+record_fields(__cordName, []) -> [].
 
 last_export_line(Exports) ->
     case lists:reverse(Exports) of
@@ -166,6 +166,5 @@ to_binary(A) when is_atom(A) -> atom_to_binary(A,latin1);
 to_binary(B) when is_binary(B) -> B;
 to_binary(I) when is_integer(I) -> to_binary(integer_to_list(I));
 to_binary(F) when is_float(F) -> float_to_binary(F,[{decimals,9},compact]);
-to_binary(L) when is_list(L) ->  iolist_to_binary(L);
-to_binary({money,_,_}) -> <<"money">>.
+to_binary(L) when is_list(L) ->  iolist_to_binary(L).
 

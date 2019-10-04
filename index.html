@@ -36,7 +36,9 @@
 
         <section>
             <a name="usage"></a><h3>USAGE</h3>
-            <div>Just plug REST endpoint directly to your Cowboy router:</div><br/>
+            <div>Just plug REST endpoint directly to your Cowboy router in order
+                 to gain the JSON access for both in-memory ETS and persistent
+                 KVS databases:</div><br/>
         <figure>
         <code> {"/:res",rest_cowboy,[]},
  {"/:res/:id",rest_cowboy,[]},
@@ -44,7 +46,7 @@
  {"/kvs/1/:id/[...]",rest_kvs,[]},</code>
         </figure><br/>
             <div>
-                OCT 2018 © <a href="https://github.com/5HT">5HT</a> <a href="https://5ht.co/license.htm">ISC</a><br />
+                OCT 2019 © <a href="https://github.com/5HT">5HT</a> <a href="https://5ht.co/license.htm">ISC</a><br />
                 VER 5.10
             </div>
         </section>
@@ -52,10 +54,8 @@
 </aside>
 <main>
     <section>
-        <a name="module"></a><h3>Module</h3>
-        <p>
-            Sample REST service implementation:
-        </p>
+        <a name="ets"></a><h3>ETS JSON</h3>
+        <p>Simple table-oriented service implementation:</p>
         <figure>
         <code>
  -module(users).
@@ -85,6 +85,45 @@
  $ curl -i -X PUT -d "id=5HT" localhost:8005/rest/users/vlad
  $ curl -i -X GET localhost:8005/rest/users/5HT
  $ curl -i -X DELETE localhost:8005/rest/users/5HT
+        </code></figure>
+    <section>
+        <a name="kvs"></a><h3>KVS JSON</h3>
+        <p>Simple chain-oriented API service implementation:</p>
+        <figure><code>
+ $ curl -X GET http://localhost:8005/rest/kvs/0/erp/group
+ {"\/erp\/group":[{"name":"Quanterall","url":"quanterall.com","location":[],"type":[]}]}
+        </code></figure>
+        <figure><code>
+ $ curl -i -X GET http://localhost:8005/rest/kvs/0/plm/FinaTech-Stamps/income
+ HTTP/1.1 200 OK
+ content-length: 1718
+ content-type: application/json
+ date: Fri, 04 Oct 2019 15:58:16 GMT
+ server: Cowboy
+
+ {"\/plm\/FinaTech-Stamps\/income":[{"invoice":"APR-2018-PAY-FTST","account":[],
+ "subaccount":[],"volume":{"fraction":0,"digits":12000},"price":{"fraction":0,
+ "digits":1},"instrument":"USD","type":"crypto","from":[],"to":[]},{"invoice":
+ "AUG-2018-PAY-FTST","account":[],"subaccount":[],"volume":{"fraction":0,
+ "digits":12000},"price":{"fraction":0,"digits":1},"instrument":"USD","type":
+ "crypto","from":[],"to":[]},{"invoice":"FEB-2018-PAY-FTST","account":[],
+ "subaccount":[],"volume":{"fraction":0,"digits":7000},"price":{"fraction":0,
+ "digits":1},"instrument":"USD","type":"crypto","from":[],"to":[]},{"invoice":
+ "JAN-2018-PAY-FTST","account":[],"subaccount":[],"volume":{"fraction":0,"digits":
+ 5000},"price":{"fraction":0,"digits":1},"instrument":"USD","type":"crypto","from":
+ [],"to":[]},{"invoice":"JUL-2018-PAY-FTST","account":[],"subaccount":[],"volume":
+ {"fraction":0,"digits":10000},"price":{"fraction":0,"digits":1},"instrument":
+ "USD","type":"crypto","from":[],"to":[]},{"invoice":"JUN-2018-PAY-FTST",
+ "account":[],"subaccount":[],"volume":{"fraction":0,"digits":10000},"price":
+ {"fraction":0,"digits":1},"instrument":"USD","type":"crypto","from":[],"to":[]},
+ {"invoice":"MAR-2018-PAY-FTST","account":[],"subaccount":[],"volume":
+ {"fraction":0,"digits":10000},"price":{"fraction":0,"digits":1},"instrument":
+ "USD","type":"crypto","from":[],"to":[]},{"invoice":"MAY-2018-PAY-FTST",
+ "account":[],"subaccount":[],"volume":{"fraction":0,"digits":15000},
+ "price":{"fraction":0,"digits":1},"instrument":"USD","type":"crypto",
+ "from":[],"to":[]},{"invoice":"SEP-2018-PAY-FTST","account":[],"subaccount":
+ [],"volume":{"fraction":0,"digits":15000},"price":{"fraction":0,"digits":1},
+ "instrument":"USD","type":"crypto","from":[],"to":[]}]}
         </code></figure>
     </section>
     <section>
