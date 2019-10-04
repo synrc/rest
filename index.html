@@ -86,14 +86,25 @@
  $ curl -i -X GET localhost:8005/rest/users/5HT
  $ curl -i -X DELETE localhost:8005/rest/users/5HT
         </code></figure>
+    </section>
     <section>
         <a name="kvs"></a><h3>KVS JSON</h3>
-        <p>Automatik chain-oriented API service implementation:</p>
+        <p>Automatik chain-oriented API service implementation. Plug your Erlang HRL schema to
+           <b>mix.exs</b></p>
+        <figure><code>
+ {:erp, "~> 0.10.2"},
+        </code></figure>
+        <p>or <b>rebar.config</b>:</p>
+        <figure><code>
+ {erp, ".*", {git, "git://github.com/erpuno/erp", {tag,"master"}}},
+        </code></figure>
+        <p>Retrive ERP organizational structure:</p>
         <figure><code>
  $ curl -X GET http://localhost:8005/rest/kvs/0/erp/group
  {"\/erp\/group":[{"name":"Quanterall","url":"quanterall.com",
  "location":[],"type":[]}]}
         </code></figure>
+        <p>Retrive all invoice payments for Stamp project of FinaTech company:</p>
         <figure><code>
  $ curl -i -X GET http://localhost:8005/rest/kvs/0/plm/FinaTech-Stamps/income
  HTTP/1.1 200 OK
@@ -130,18 +141,16 @@
     <section>
         <h3>MODULES</h3>
         <p>Module <b>rest</b> is an Erlang/OTP application, while
-           <b>rest_cowboy</b> and <b>rest_kvs</b> are the access/routing/gate-modules to other systems.</p>
+        <b>rest_cowboy</b> and <b>rest_kvs</b> are the access/routing/gate-modules
+           to other systems.</p>
         <ul><li><b><a href="man/rest.htm">rest</a></b> — rest</li>
             <li><b><a href="man/rest_cowboy.htm">rest_cowboy</a></b> — rest_cowboy</li>
-            <li><b><a href="man/rest_kvs.htm">rest_kvs</a></b> — rest_kvs</li>
-        </ul>
+            <li><b><a href="man/rest_kvs.htm">rest_kvs</a></b> — rest_kvs</li></ul>
     </section>
-
     <section>
         <a name="credits"></a><h3>CREDTIS</h3>
         <ul><li>Dmitry Bushmelev</li>
-            <li>Maxim Sokhatsky</li>
-        </ul>
+            <li>Maxim Sokhatsky</li></ul>
     </section>
 </main>
 <footer>
