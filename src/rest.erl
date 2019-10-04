@@ -145,13 +145,15 @@ props_skip({<<BinaryKey/binary>>, Value}, Acc) ->
     catch _:_ -> Acc end;
 props_skip({Key, Value}, Acc) -> [{Key, from_json(Value)} | Acc].
 
+to_json(X) when is_tuple(X) -> Module = hd(tuple_to_list(X)), Module:to_json(X);
 to_json(Data) ->
     case is_string(Data) of
         true  -> rest:to_binary(Data);
         false -> json_match(Data)
     end.
 
-json_match([{_, _} | _] = Props) -> [{rest:to_binary(Key), to_json(Value)} || {Key, Value} <- Props];
+json_match([{_, _} | _] = Props) ->
+  [ {rest:to_binary(Key), to_json(Value)} || {Key, Value} <- Props];
 json_match([_ | _] = NonEmptyList) -> [to_json(X) || X <- NonEmptyList];
 json_match(Any) -> Any.
 
@@ -164,4 +166,6 @@ to_binary(A) when is_atom(A) -> atom_to_binary(A,latin1);
 to_binary(B) when is_binary(B) -> B;
 to_binary(I) when is_integer(I) -> to_binary(integer_to_list(I));
 to_binary(F) when is_float(F) -> float_to_binary(F,[{decimals,9},compact]);
-to_binary(L) when is_list(L) ->  iolist_to_binary(L).
+to_binary(L) when is_list(L) ->  iolist_to_binary(L);
+to_binary({money,_,_}) -> <<"money">>.
+
