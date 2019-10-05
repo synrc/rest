@@ -5,5 +5,3 @@ new() -> {ts,{{0,0,0},{0,0,0}}}.
 to_json(#ts{time=X}) -> [{<<"time">>,iolist_to_binary(lists:flatten(io_lib:format("~p",[X])))}].
 from_json([{<<"time">>,X}],_) -> #ts{time = rest:parse(X) };
 from_json([{time,X}],_) -> #ts{time = rest:parse(X) }.
-
-
