@@ -76,7 +76,6 @@ to_json(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
     {iolist_to_binary([?REST_JSON:encode(rest:binarize(Type:to_json(Resource))),"\n"]), Req, State};
 to_json(#{bindings := #{resource := Module}} = Req, State) ->
     Fold = [ begin M = element(1,Resource), rest:binarize(M:to_json(Resource)) end || Resource <- kvs:all(c(Module))],
-    io:format("Fold: ~p~n",[Fold]),
     {iolist_to_binary([?REST_JSON:encode([{Module,Fold}]),"\n"]), Req, State}.
 
 content_types_accepted(Req, State) ->
