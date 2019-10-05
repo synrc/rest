@@ -9,6 +9,7 @@
 -define(REST_JSON, (application:get_env(rest,json,jsone))).
 -endif.
 
+c(X) when is_tuple(X) -> Module = hd(tuple_to_list(X)), Module:uri(X);
 c(X) -> binary_to_list(X).
 
 % kvs rest api
@@ -30,7 +31,15 @@ update_req(Req) -> #{ bindings := Bindings, path_info := List } = Req,
 init(#{bindings := #{id := Id}} = Req, State) -> {cowboy_rest, update_req(Req), State};
 init(Req, State) -> {cowboy_rest, update_req(Req), State}.
 
-resource_exists(#{bindings := #{resource := Module, id := Id}} = Req, State) -> {rest_kvs:exists(Module,Id), Req, State};
+parse_id(Id) ->
+  List = binary_to_list(Id),
+  Parsed = case string:tokens(List,",") of
+     [X] -> Id;
+       _ -> rest:parse(lists:concat(["{",List,"}."]))
+  end.
+
+resource_exists(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
+  {rest_kvs:exists(Module,parse_id(Id)), Req, State};
 resource_exists(#{bindings := #{resource := Module}} = Req, State) -> {rest_kvs:exists(Module), Req, State};
 resource_exists(#{bindings := #{id := _}} = Req, State) -> {true, Req, State}.
 
@@ -62,7 +71,7 @@ default_html_layout(Body) -> [<<"<html><body>">>, Body, <<"</body></html>">>].
 % JSON seems fine
 
 to_json(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
-    {ok,Resource} = kvs:get(c(Module),c(Id)),
+    {ok,Resource} = kvs:get(c(Module),c(parse_id(Id))),
     Type = element(1,Resource),
     {iolist_to_binary([?REST_JSON:encode(Type:to_json(Resource)),"\n"]), Req, State};
 to_json(#{bindings := #{resource := Module}} = Req, State) ->
