@@ -35,7 +35,7 @@ parse_id(Id) ->
   List = binary_to_list(Id),
   Parsed = case string:tokens(List,",") of
      [X] -> Id;
-       _ -> rest:parse(lists:concat(["{",List,"}."]))
+       _ -> rest:parse(lists:concat(["{",List,"}"]))
   end.
 
 resource_exists(#{bindings := #{resource := Module, id := Id}} = Req, State) ->

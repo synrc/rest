@@ -198,8 +198,9 @@ to_binary(I) when is_integer(I) -> to_binary(integer_to_list(I));
 to_binary(F) when is_float(F) -> float_to_binary(F,[{decimals,9},compact]);
 to_binary(L) when is_list(L) ->  iolist_to_binary(L).
 
+parse(String) when is_binary(String) -> parse(binary_to_list(String));
 parse(String) ->
-    {ok,Tokens,_EndLine} = erl_scan:string(String),
+    {ok,Tokens,_EndLine} = erl_scan:string(String ++ "."),
     {ok,AbsForm} = erl_parse:parse_exprs(Tokens),
     {value,Value,_Bs} = erl_eval:exprs(AbsForm, erl_eval:new_bindings()),
     Value.
