@@ -156,12 +156,39 @@
  "Payment","docs":[],"time":{"time":"{{2019,10,5},{21,21,51}}"}}]}
         </code></figure>
 
-        <p>Retrieve Step 2 from Process 288117946539000:</p>
+        <p>Retrieve Step 2 from process 288117946539000:</p>
         <figure><code>
  curl -X GET localhost:8005/rest/kvs/1/step,0,288117946539000/bpe/hist/288117946539000
  {"id":{"id":2,"proc":"288117946539000"},"container":"feed","feed_id":[],
  "prev":[],"next":[],"name":[],"task":"Upload","docs":[],"time":
  {"time":"{{2019,10,5},{21,21,51}}"}}
+        </code></figure>
+
+        <p>Retrieve all processes:</p>
+        <figure><code>
+ $ curl -X GET http://localhost:8005/rest/kvs/0/bpe/proc
+ {"\/bpe\/proc":[{"id":"288117946539000","container":"feed","feed_id":[],
+ "prev":[],"next":[],"name":"IBAN Account","feeds":[],"roles":[],"tasks":
+ [{"name":"Created","module":"bpe_account","prompt":[],"etc":[]},{"name":
+ "Init","module":"bpe_account","prompt":[],"roles":[],"etc":[]},{"name":
+ "Upload","module":"bpe_account","prompt":[],"roles":[],"etc":[]},{"name":
+ "Signatory","module":"bpe_account","prompt":[],"roles":[],"etc":[]},{"name":
+ "Payment","module":"bpe_account","prompt":[],"roles":[],"etc":[]},{"name":
+ "Process","module":"bpe_account","prompt":[],"roles":[],"etc":[]},{"name":
+ "Final","module":"bpe_account","prompt":[],"etc":[]}],"events":[{"name":
+ "PaymentReceived","module":[],"prompt":[],"etc":[],"payload":[],"timeout":[]},
+ {"name":"*","module":[],"prompt":[],"etc":[],"payload":[],"timeout":
+ {"spec":"{0,{10,0,10}}"},"timeDate":[],"timeDuration":[],"timeCycle":[]}],
+ "hist":[],"flows":[{"name":[],"condition":[],"source":"Created","target":
+ "Init"},{"name":[],"condition":[],"source":"Init","target":"Upload"},
+ {"name":[],"condition":[],"source":"Upload","target":"Payment"},
+ {"name":[],"condition":[],"source":"Payment","target":["Signatory",
+ "Process"]},{"name":[],"condition":[],"source":"Process","target":
+ ["Process","Final"]},{"name":[],"condition":[],"source":"Signatory",
+ "target":["Process","Final"]}],"rules":[],"docs":[],"options":[],
+ "task":"Created","timer":[],"notifications":"undefined","result":[],
+ "started":{"time":"{{2019,10,5},{22,5,20}}"},"beginEvent":"Created",
+ "endEvent":"Final"}]}
         </code></figure>
 
     </section>
