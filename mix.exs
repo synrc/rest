@@ -12,16 +12,16 @@ defmodule REST.Mixfile do
   def application() do
     [
       mod: {:rest, []},
-#      applications: [:public_key,:asn1,:kernel,:stdlib,:ranch,:cowboy,:syntax_tools,:compiler,:rocksdb,:kvs, :erp, :bpe]
-      applications: [:public_key,:asn1,:kernel,:stdlib,:ranch,:cowboy,:syntax_tools,:compiler,:rocksdb,:kvs]
+      applications: [:public_key,:asn1,:kernel,:stdlib,:ranch,:cowboy,:syntax_tools,:compiler,:rocksdb,:kvs, :erp, :bpe]
+#      applications: [:public_key,:asn1,:kernel,:stdlib,:ranch,:cowboy,:syntax_tools,:compiler,:rocksdb,:kvs]
     ]
   end
 
   def deps, do: [ {:ex_doc, ">= 0.0.0", only: :dev},
                   {:rocksdb, "~> 1.3.2"},
                   {:kvs, "~> 6.9.2"},
-#                  {:erp, "~> 0.10.3"},
-#                  {:bpe, "~> 4.9.18"},
+                  {:erp, "~> 0.10.3"},
+                  {:bpe, "~> 4.9.18"},
                   {:jsone, "~> 1.5.0"},
                   {:cowboy, "~> 2.5.0"} ]
 
