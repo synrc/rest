@@ -171,9 +171,12 @@ atomize([{Key,_}|_]=Props) when Key =/= struct ->
 atomize(X) -> X.
 
 binarize([{Key,_}|_]=Props) when Key =/= struct ->
-  lists:map(fun ({K,V}) when is_atom(K) -> {list_to_binary(atom_to_list(K)),V};
-                ({K,V}) when is_binary(K) -> {K,V} end, Props);
+  lists:map(fun ({K,V}) when is_atom(K) -> {list_to_binary(atom_to_list(K)),allowed_value(V)};
+                ({K,V}) when is_binary(K) -> {K,allowed_value(V)} end, Props);
 binarize(X) -> X.
+
+allowed_value(X) when is_reference(X) -> [];
+allowed_value(X) -> X.
 
 to_json(X) when is_tuple(X) -> Module = hd(tuple_to_list(X)), Module:to_json(X);
 to_json(Data) ->

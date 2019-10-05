@@ -92,12 +92,17 @@
         <p>Automatiс chain-oriented API service implementation. Plug your Erlang HRL schema to
            <b>mix.exs</b></p>
         <figure><code>
+ {:bpe, "~> 4.9.17"},
  {:erp, "~> 0.10.2"},
         </code></figure>
         <p>or <b>rebar.config</b>:</p>
         <figure><code>
+ {bpe, ".*", {git, "git://github.com/synrc/bpe", {tag,"master"}}},
  {erp, ".*", {git, "git://github.com/erpuno/erp", {tag,"master"}}},
         </code></figure>
+    </section>
+    <section>
+        <a name="kvs"></a><h3>ERP JSON</h3>
         <p>Retrieve ERP organizational structure:</p>
         <figure><code>
  $ curl -X GET http://localhost:8005/rest/kvs/0/erp/group
@@ -106,13 +111,7 @@
         </code></figure>
         <p>Retrive all invoice payments for Stamp project of FinaTech company:</p>
         <figure><code>
- $ curl -i -X GET http://localhost:8005/rest/kvs/0/plm/FinaTech-Stamps/income
- HTTP/1.1 200 OK
- content-length: 1718
- content-type: application/json
- date: Fri, 04 Oct 2019 15:58:16 GMT
- server: Cowboy
-
+ $ curl -X GET http://localhost:8005/rest/kvs/0/plm/FinaTech-Stamps/income
  {"\/plm\/FinaTech-Stamps\/income":[{"invoice":"APR-2018-PAY-FTST","account":[],
  "subaccount":[],"volume":{"fraction":0,"digits":12000},"price":{"fraction":0,
  "digits":1},"instrument":"USD","type":"crypto","from":[],"to":[]},{"invoice":
@@ -137,6 +136,34 @@
  [],"volume":{"fraction":0,"digits":15000},"price":{"fraction":0,"digits":1},
  "instrument":"USD","type":"crypto","from":[],"to":[]}]}
         </code></figure>
+
+    </section>
+    <section>
+        <a name="kvs"></a><h3>BPE JSON</h3>
+
+        <p>Retrieve All History from Process 288117946539000:</p>
+        <figure><code>
+ curl -X GET http://localhost:8005/rest/kvs/0/bpe/hist/288117946539000
+ {"\/bpe\/hist\/288117946539000":[{"id":{"id":0,"proc":"288117946539000"},
+ "container":"feed","feed_id":[],"prev":[],"next":[],"name":[],"task":"Created",
+ "docs":[],"time":{"time":"{{2019,10,5},{21,21,44}}"}},{"id":{"id":1,"proc":
+ "288117946539000"},"container":"feed","feed_id":[],"prev":[],"next":[],
+ "name":[],"task":"Init","docs":[],"time":{"time":"{{2019,10,5},{21,21,50}}"}},
+ {"id":{"id":2,"proc":"288117946539000"},"container":"feed","feed_id":[],
+ "prev":[],"next":[],"name":[],"task":"Upload","docs":[],"time":{"time":
+ "{{2019,10,5},{21,21,51}}"}},{"id":{"id":3,"proc":"288117946539000"},
+ "container":"feed","feed_id":[],"prev":[],"next":[],"name":[],"task":
+ "Payment","docs":[],"time":{"time":"{{2019,10,5},{21,21,51}}"}}]}
+        </code></figure>
+
+        <p>Retrieve Step 2 from Process 288117946539000:</p>
+        <figure><code>
+ curl -X GET localhost:8005/rest/kvs/1/step,0,288117946539000/bpe/hist/288117946539000
+ {"id":{"id":2,"proc":"288117946539000"},"container":"feed","feed_id":[],
+ "prev":[],"next":[],"name":[],"task":"Upload","docs":[],"time":
+ {"time":"{{2019,10,5},{21,21,51}}"}}
+        </code></figure>
+
     </section>
     <section>
         <h3>MODULES</h3>
