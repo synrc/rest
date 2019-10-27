@@ -1,6 +1,7 @@
 REST: framework with typed JSON
 ===============================
 
+[![Actions Status](https://github.com/synrc/rest/workflows/mix/badge.svg)](https://github.com/synrc/rest/actions)
 [![Build Status](https://travis-ci.org/synrc/rest.svg?branch=master)](https://travis-ci.org/synrc/rest)
 [![Hex pm](http://img.shields.io/hexpm/v/rest.svg?style=flat)](https://hex.pm/packages/rest)
 
