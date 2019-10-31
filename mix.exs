@@ -3,7 +3,7 @@ defmodule REST.Mixfile do
 
   def project do
     [app: :rest,
-     version: "5.10.7",
+     version: "5.10.8",
      description: "REST erlang interface generator",
      deps: deps(),
      package: package()]
@@ -13,15 +13,13 @@ defmodule REST.Mixfile do
     [
       mod: {:rest, []},
       applications: [:public_key,:asn1,:kernel,:stdlib,:ranch,:cowboy,:syntax_tools,:compiler,:rocksdb,:kvs, :erp, :bpe]
-#      applications: [:public_key,:asn1,:kernel,:stdlib,:ranch,:cowboy,:syntax_tools,:compiler,:rocksdb,:kvs]
     ]
   end
 
-  def deps, do: [ {:ex_doc, ">= 0.0.0", only: :dev},
+  def deps, do: [ {:ex_doc, "~> 0.11", only: :dev},
                   {:rocksdb, "~> 1.3.2"},
-                  {:kvs, "~> 6.10.0", override: true},
-                  {:erp, "~> 0.10.3"},
-                  {:bpe, "~> 4.10.11"},
+                  {:erp, "~> 0.10.4"},
+                  {:bpe, "~> 4.10.24"},
                   {:jsone, "~> 1.5.0"},
                   {:cowboy, "~> 2.5.0"} ]
 

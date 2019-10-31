@@ -3,4 +3,4 @@
 -compile({parse_transform, rest}).
 -compile(export_all).
 -rest_record('Payment').
-new() -> #'Payment'{}.
+new() -> #'Payment'{type=fiat}.

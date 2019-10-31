@@ -4,7 +4,7 @@
 -behaviour(supervisor).
 -export([init/1,start/2, stop/1]).
 -export([behaviour_info/1, parse_transform/2, generate_to_json/3, binarize/1,
-         generate_from_json/3, from_json/2, to_json/1, to_binary/1, parse/1]).
+         generate_from_json/3, from_json/2, to_json/1, to_binary/1, parse/1, atomize/1]).
 
 stop(_State) -> ok.
 start(_StartType, _StartArgs) -> supervisor:start_link({local, ?MODULE}, ?MODULE, []).

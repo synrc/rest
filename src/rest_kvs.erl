@@ -1,5 +1,6 @@
 -module(rest_kvs).
 -include_lib("kvs/include/kvs.hrl").
+-compile(export_all).
 -export([exists/1, exists/2, new/1, get/1, delete/2, post/2, post/3]).
 -export([init/2, resource_exists/2, allowed_methods/2, content_types_provided/2,
          to_html/2, to_json/2, content_types_accepted/2, delete_resource/2,
@@ -18,6 +19,7 @@ new(Type)          -> Type:new().
 exists(Mod)        -> {X,_} = kvs:get(writer,c(Mod)), X == ok.
 exists(Mod,Id)     -> {X,_} = kvs:get(c(Mod),c(Id)), X == ok.
 get(Mod)           -> kvs:all(Mod).
+get(Mod,Id)        -> {X,Y} = kvs:get(c(Mod),c(Id)), X == ok, Y.
 delete(Mod,Id)     -> kvs:delete(Mod,Id).
 post(Mod,Resource) when is_tuple(Resource) -> kvs:append(Mod,Resource).
 post(Type,Mod,Data)     when is_list(Data) -> post(Mod,Type:from_json(new(Type))).
@@ -58,13 +60,13 @@ content_types_provided(#{bindings := #{resource := Module}} = Req, State) ->
 % TODO: HTML render broken!
 
 to_html(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
-    Body = case Id of
-               Id when Id==[];Id==undefined -> [ rest_kvs:to_html(Module, Resource) || Resource <- rest_kvs:get(Module,Id) ];
-               _ -> rest_kvs:to_html(rest_kvs:get(Module,Id)) end,
-    Html = case application:get_env(rest,html_layout,false) of
-               true  -> rest_kvs:html_layout(Module, Req, Body);
-               false -> default_html_layout(Body) end,
-    {Html, Req, State}.
+%    Body = case Id of
+%               Id when Id==[];Id==undefined -> [ rest_kvs:to_html(Module, Resource) || Resource <- rest_kvs:get(Module,Id) ];
+%               _ -> rest_kvs:to_html(rest_kvs:get(Module,Id)) end,
+%    Html = case application:get_env(rest,html_layout,false) of
+%               true  -> rest_kvs:html_layout(Module, Req, Body);
+%               false -> default_html_layout(Body) end,
+    {<<>>, Req, State}.
 
 default_html_layout(Body) -> [<<"<html><body>">>, Body, <<"</body></html>">>].
 
@@ -117,12 +119,14 @@ handle_data(Mod, Id, Data, Req) ->
                                    false -> default_put(Type, Mod, Id, Data, Req) end
     end.
 
+validate(_,_,_) -> true.
+keys_allowed(_,_) -> true.
+
 default_put(Type, Mod, Id, Data, Req) when is_map(Data) -> default_put(Type, Mod, Id, maps:to_list(Data), Req);
 default_put(Type, Mod, Id, Data, Req) ->
     NewRes = Type:from_json(Data, rest_kvs:get(Mod,Id)),
     NewId = proplists:get_value(id, Type:to_json(NewRes)),
     case Id =/= NewId of
-        true when Id =:= [] -> skip;
         true -> rest_kvs:delete(Mod,Id);
         false -> true end,
     rest_kvs:post(Type,Mod,NewRes).
