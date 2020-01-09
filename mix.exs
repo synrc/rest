@@ -19,7 +19,8 @@ defmodule REST.Mixfile do
   def deps, do: [ {:ex_doc, "~> 0.11", only: :dev},
                   {:rocksdb, "~> 1.3.2"},
                   {:erp, "~> 0.10.4"},
-                  {:bpe, "~> 4.10.24"},
+                  {:kvs, "~> 7.1.1", override: true},
+                  {:bpe, "~> 5.1.1", override: true},
                   {:jsone, "~> 1.5.0"},
                   {:cowboy, "~> 2.5.0"} ]
 
