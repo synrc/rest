@@ -26,8 +26,8 @@ resource_exists(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
     M = c(Module),
     io:format("EXISTS: ~p dymamic: ~p~n",[Id,M:exists(Id)]),
     {M:exists(Id), Req, State};
-resource_exists(#{bindings := #{resource := _}} = Req, State) -> io:format("EXISTS: false~n"), {false, Req, State};
-resource_exists(#{bindings := #{id := _}} = Req, State) -> io:format("EXISTS: true~n"), {true, Req, State}.
+resource_exists(#{bindings := #{resource := Module}} = Req, State) -> io:format("resource ~p: no-id~n",[Module]), {true, Req, State};
+resource_exists(#{bindings := #{id := _}} = Req, State) -> io:format("EXISTS id: true~n"), {true, Req, State}.
 
 allowed_methods(#{bindings := #{resource := _}} = Req, State) -> {[<<"GET">>, <<"POST">>], Req, State};
 allowed_methods(#{bindings := #{resource := _, id := _}} = Req, State) -> {[<<"GET">>, <<"PUT">>, <<"DELETE">>], Req, State}.
@@ -51,11 +51,19 @@ to_html(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
 default_html_layout(Body) -> [<<"<html><body>">>, Body, <<"</body></html>">>].
 
 to_json(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
+    io:format("~p ~p ~p~n",[?FUNCTION_NAME,Module,Id]),
     M = c(Module),
     Struct = case Id of
                  undefined -> [{M, [ M:to_json(Resource) || Resource <- M:get() ] } ];
                  _         -> M:to_json(M:get(Id)) end,
+    {iolist_to_binary(?REST_JSON:encode(Struct)), Req, State};
+
+to_json(#{bindings := #{resource := Module}} = Req, State) ->
+    io:format("~p ~p~n",[?FUNCTION_NAME,Module]),
+    M = c(Module),
+    Struct = [{M, [ M:to_json(Resource) || Resource <- M:get() ] } ],
     {iolist_to_binary(?REST_JSON:encode(Struct)), Req, State}.
+
 
 content_types_accepted(Req, State) ->
   {[{<<"application/x-www-form-urlencoded">>, handle_urlencoded_data},
@@ -64,6 +72,7 @@ content_types_accepted(Req, State) ->
 handle_urlencoded_data(#{bindings := #{resource := Module}} = Req0, State) ->
     {ok, Data1, Req} = cowboy_req:read_urlencoded_body(Req0),
     io:format("FORM: ~p, Data1: ~p~n",[Module,Data1]),
+
     {handle_data(c(Module), [], Data1, Req), Req, State};
 
 handle_urlencoded_data(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
@@ -84,11 +93,14 @@ handle_json_data(#{bindings := #{resource := Module, id := Id}} = Req, State) ->
     {handle_data(c(Module), Id, Data, Req), Req2, State}.
 
 handle_data(Mod, Id, Data, Req) ->
+    io:format("handle_data(~p)~n",[{Mod,Id,Data,Req}]),
     Valid = case erlang:function_exported(Mod, validate, 2) of
                 true  -> Mod:validate(Id, Data);
                 false -> default_validate(Mod, Id, Data, Req) end,
+    io:format("Valid ~p Id ~p~n",[Valid,Id]),
     case {Valid, Id} of
         {false, _}         -> false;
+        {true,  []}              -> Mod:post(Data);
         {true,  <<"undefined">>} -> Mod:post(Data);
         {true,  _}         -> case erlang:function_exported(Mod, put, 2) of
                                   true  -> Mod:put(Id, Data);
