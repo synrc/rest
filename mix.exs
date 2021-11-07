@@ -3,7 +3,7 @@ defmodule REST.Mixfile do
 
   def project do
     [app: :rest,
-     version: "6.1.1",
+     version: "6.11.1",
      description: "REST erlang interface generator",
      deps: deps(),
      package: package()]
@@ -17,9 +17,9 @@ defmodule REST.Mixfile do
   end
 
   def deps, do: [ {:ex_doc, "~> 0.11", only: :dev},
-                  {:rocksdb, "~> 1.3.2"},
-                  {:bpe, "~> 5.1.1"},
-                  {:erp, "~> 1.1.1"},
+                  {:rocksdb, "~> 1.6.0"},
+                  {:bpe, "~> 6.11.0"},
+                  {:erp, "~> 1.11.0"},
                   {:jsone, "~> 1.5.0"},
                   {:cowboy, "~> 2.5.0"} ]
 
