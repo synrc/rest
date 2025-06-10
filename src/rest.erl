@@ -6,6 +6,8 @@
 
 -behaviour(supervisor).
 
+-include_lib("kvs/include/metainfo.hrl").
+
 -export([init/1, start/2, stop/1]).
 
 -export([behaviour_info/1,
@@ -25,11 +27,11 @@ start(_StartType, _StartArgs) ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 init([]) ->
-    users:init(),
+    %% users:init(),
     kvs:join(),
-    cowboy:start_clear(http,
-                       [{port, application:get_env(n2o, port, 8005)}],
-                       #{env => #{dispatch => points()}}),
+    %% cowboy:start_clear(http,
+    %%                    [{port, application:get_env(n2o, port, 8005)}],
+    %%                    #{env => #{dispatch => points()}}),
     {ok, {{one_for_one, 5, 10}, []}}.
 
 points() ->
@@ -110,9 +112,14 @@ record_fields(RecordName, [_ | Forms]) ->
     record_fields(RecordName, Forms);
 record_fields(__cordName, []) -> [].
 
+line_number(Line) when is_integer(Line) -> Line;
+line_number({Line, _Column}) when is_integer(Line) -> Line;
+line_number(_) -> 1.
+
 last_export_line(Exports) ->
     case lists:reverse(Exports) of
-        [{_, Line, _, _} | _] -> Line;
+        [{_, Line, _, _} | _] when is_integer(Line) -> Line;
+        [{_, {Line, _}, _, _} | _] when is_integer(Line) -> Line;
         _ -> 0
     end.
 
@@ -218,14 +225,15 @@ from_json_clauses(Line, Record, [Field | Fields]) ->
      | from_json_clauses(Line, Record, Fields)].
 
 generate_from_json({eof, Line}, Record, Fields) ->
+    LineNum = line_number(Line),
     [{function,
-      Line,
+      LineNum,
       from_json,
       2,
-      [from_json_prelude(Line)] ++
-          from_json_clauses(Line, Record, Fields) ++
-              [from_json_coda(Line)]},
-     {eof, Line + 1}];
+      [from_json_prelude(LineNum)] ++
+          from_json_clauses(LineNum, Record, Fields) ++
+              [from_json_coda(LineNum)]},
+     {eof, LineNum + 1}];
 generate_from_json(Form, _, _) -> Form.
 
 export({attribute, LastExportLine, export, Exports},
@@ -295,9 +303,41 @@ binarize(X) -> X.
 allowed_value(X) when is_reference(X) -> [];
 allowed_value(X) -> X.
 
+to_map(Module, Resource) ->
+    case erlang:function_exported(Module, to_json, 1) of
+        true -> Module:to_json(Resource);
+        false -> record_to_map(Resource)
+    end.
+
+record_to_map(Record) when is_tuple(Record) ->
+    Table = element(1, Record),
+    case get_fields(Table) of
+        {ok, Fields} ->
+            BinFields = [list_to_binary(atom_to_list(F)) || F <- Fields],
+            Values = [element(I, Record) || I <- lists:seq(2, tuple_size(Record))],
+            maps:from_list(lists:zip(BinFields, Values));
+        _ ->
+            Size = tuple_size(Record),
+            Names = [list_to_binary("field_" ++ integer_to_list(I)) || I <- lists:seq(1, Size-1)],
+            Values = [element(I, Record) || I <- lists:seq(2, Size)],
+            maps:from_list(lists:zip(Names, Values))
+    end;
+record_to_map(Data) -> Data.
+
+get_fields(Table) ->
+    try
+        Tables = (erp_kvs:metainfo())#schema.tables,
+        case lists:keyfind(Table, #table.name, Tables) of
+            false -> {error, not_found};
+            TableDef -> {ok, TableDef#table.fields}
+        end
+    catch _:_ -> {error, schema_not_found}
+    end.
+
+
 to_json(X) when is_tuple(X) ->
     Module = hd(tuple_to_list(X)),
-    Module:to_json(X);
+    to_map(Module, X);
 to_json(Data) ->
     case is_string(Data) of
         true -> rest:to_binary(Data);
